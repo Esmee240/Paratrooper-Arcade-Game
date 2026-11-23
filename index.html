@@ -306,9 +306,10 @@
       <p id="overlay-subtitle" class="subtitle">VERDEDIG JE BASIS TEGEN LANDENDE PARACHUTISTEN!</p>
       
       <div class="legend">
-        <div><span class="cyan">HELIKOPTER / JET:</span> +25 PT</div>
+        <div><span class="cyan">HELIKOPTER / JET:</span> +25 PT (MEGA: +100 PT)</div>
         <div><span class="yellow">PARACHUTE KAPOT:</span> +15 PT (+10 PT BIJ VAL)</div>
-        <div><span class="magenta">PARACHUTIST RAKEN:</span> +25 PT</div>
+        <div><span class="magenta">SOLDAAT / SPEEDSTER (SNEL):</span> +25 / +40 PT</div>
+        <div><span class="cyan">HEAVY (2 HP) / GOUDEN VIP:</span> +50 / +75 PT</div>
         <div><span class="red">ELK SCHOT KOST:</span> -1 PT (SCORE KAN NEGATIEF!)</div>
         <div><span class="red">GEVAAR:</span> 4 GELAND AAN 1 KANT = AANVAL!</div>
         <div style="margin-top:8px; color:#55ff55;">MUIS = RICHTEN &amp; KLIKKEN | PIJLTJES / A-D + SPATIE</div>
@@ -845,12 +846,11 @@
 
       function spawnMegaAircraft() {
         const fromLeft = Math.random() < 0.5;
-        const y = 78;
         aircrafts.push({
           x: fromLeft ? -95 : W + 95,
-          y: y,
+          y: 72,
           dir: fromLeft ? 1 : -1,
-          speed: 2.2 + Math.min(1.5, wave * 0.1),
+          speed: 2.3 + Math.min(1.5, wave * 0.08),
           type: 'mega',
           isMega: true,
           points: 100,
@@ -860,16 +860,48 @@
         });
       }
 
-      function spawnParatrooper(x, y) {
+      function spawnParatrooper(x, y, isMegaDrop) {
         if (Math.abs(x - TURRET_X) < 60) {
           x += x < TURRET_X ? -64 : 64;
         }
         x = Math.max(24, Math.min(W - 24, x));
 
+        // Kies een type parachutist op basis van de huidige golf
+        let trooperType = 'normal';
+        const roll = Math.random();
+        if (isMegaDrop || roll < 0.12) {
+          trooperType = 'vip'; // Gouden VIP (bonus punten!)
+        } else if (wave >= 2 && roll < 0.34) {
+          trooperType = 'speed'; // Snelle verkenner met gestreepte chute
+        } else if (wave >= 3 && roll < 0.52) {
+          trooperType = 'heavy'; // Gepantserde soldaat (2 HP, zwaardere chute)
+        }
+
+        const baseVy = 1.15 + Math.min(0.8, wave * 0.06);
+        let vy = baseVy;
+        let hp = 1;
+        let points = 25;
+
+        if (trooperType === 'speed') {
+          vy = baseVy * 1.48;
+          points = 40;
+        } else if (trooperType === 'heavy') {
+          vy = baseVy * 0.85;
+          hp = 2;
+          points = 50;
+        } else if (trooperType === 'vip') {
+          vy = baseVy * 1.18;
+          points = 75;
+        }
+
         paratroopers.push({
           x: x,
           y: y + 14,
-          vy: 1.15 + Math.min(0.8, wave * 0.06),
+          vy: vy,
+          type: trooperType,
+          hp: hp,
+          maxHp: hp,
+          points: points,
           hasChute: true,
           fallSpeed: 0,
           swayOffset: Math.random() * Math.PI * 2
@@ -888,6 +920,7 @@
             return {
               x: t.x,
               y: GROUND_Y,
+              type: t.type || 'normal',
               targetOffset: idx
             };
           })
@@ -1023,10 +1056,26 @@
             }
 
             if (Math.abs(b.x - p.x) < 11 && Math.abs(b.y - p.y) < 13) {
-              createExplosion(p.x, p.y, ['#ff55ff', '#ffff55', '#ff5555'], 18);
-              playSound('explosion');
-              addScore(25, p.x, p.y - 10, '#ff55ff');
-              paratroopers.splice(j, 1);
+              p.hp -= 1;
+              if (p.hp > 0) {
+                // Pantser geraakt (bijv. Heavy trooper)
+                createExplosion(p.x, p.y, ['#ffffff', '#55ffff'], 10);
+                playSound('chute');
+                floatingTexts.push({
+                  x: p.x,
+                  y: p.y - 14,
+                  text: 'PANTSER!',
+                  color: '#55ffff',
+                  life: 30,
+                  vy: -0.7
+                });
+              } else {
+                const hitColor = p.type === 'vip' ? '#ffff55' : (p.type === 'heavy' ? '#55ffff' : (p.type === 'speed' ? '#ff8833' : '#ff55ff'));
+                createExplosion(p.x, p.y, [hitColor, '#ffff55', '#ffffff'], p.type === 'vip' ? 28 : 18);
+                playSound('explosion');
+                addScore(p.points || 25, p.x, p.y - 10, hitColor);
+                paratroopers.splice(j, 1);
+              }
               bulletHit = true;
               break;
             }
@@ -1045,7 +1094,7 @@
           if (gameState === 'PLAYING' && a.dropsLeft > 0) {
             const passedDrop = (a.dir === 1 && a.x >= a.nextDropX) || (a.dir === -1 && a.x <= a.nextDropX);
             if (passedDrop) {
-              spawnParatrooper(a.x, a.y);
+              spawnParatrooper(a.x, a.y, a.isMega);
               a.dropsLeft--;
               if (a.dropsLeft > 0) {
                 a.nextDropX = a.x + a.dir * (a.isMega ? 150 : (90 + Math.random() * 140));
@@ -1079,11 +1128,11 @@
             } else if (adminCheats.godMode) {
               createExplosion(p.x, GROUND_Y - 4, ['#55ffff', '#ffff55'], 12);
               playSound('explosion');
-              addScore(25, p.x, GROUND_Y - 18, '#55ffff');
+              addScore(p.points || 25, p.x, GROUND_Y - 18, '#55ffff');
               paratroopers.splice(i, 1);
             } else {
               playSound('land');
-              const landedObj = { x: p.x, y: GROUND_Y };
+              const landedObj = { x: p.x, y: GROUND_Y, type: p.type || 'normal' };
               if (p.x < TURRET_X) {
                 landedLeft.push(landedObj);
                 if (landedLeft.length >= 4 && gameState === 'PLAYING') {
@@ -1164,7 +1213,8 @@
       // ==========================================
       // 7. TEKENFUNCTIES
       // ==========================================
-      function drawTrooper(x, y, hasChute, isFalling, theme) {
+      function drawTrooper(x, y, hasChute, isFalling, theme, trooperType, hp) {
+        const type = trooperType || 'normal';
         ctx.save();
         ctx.translate(Math.round(x), Math.round(y));
 
@@ -1180,35 +1230,143 @@
           ctx.lineTo(0, -5);
           ctx.stroke();
 
-          ctx.fillStyle = theme ? theme.chute : '#ff55ff';
-          ctx.beginPath();
-          ctx.arc(0, -15, 14, Math.PI, 0, false);
-          ctx.fill();
+          // Parachute stijl per type
+          if (type === 'speed') {
+            // Compactere, aerodynamische oranje/rode chute
+            ctx.fillStyle = '#ff5555';
+            ctx.beginPath();
+            ctx.arc(0, -15, 12, Math.PI, 0, false);
+            ctx.fill();
 
+            ctx.fillStyle = '#ffff55';
+            ctx.beginPath();
+            ctx.arc(0, -15, 6, Math.PI, 0, false);
+            ctx.fill();
+          } else if (type === 'heavy') {
+            // Extra brede stalen/cyaan chute met dubbel spanbandje
+            ctx.fillStyle = '#3399ff';
+            ctx.beginPath();
+            ctx.arc(0, -16, 16, Math.PI, 0, false);
+            ctx.fill();
+
+            ctx.fillStyle = '#aaddff';
+            ctx.fillRect(-14, -18, 28, 3);
+          } else if (type === 'vip') {
+            // Gouden VIP parachute met glinstering
+            ctx.fillStyle = (Math.floor(frameCount / 5) % 2 === 0) ? '#ffdd22' : '#ffffff';
+            ctx.beginPath();
+            ctx.arc(0, -15, 14, Math.PI, 0, false);
+            ctx.fill();
+
+            ctx.fillStyle = '#ff8800';
+            ctx.beginPath();
+            ctx.arc(0, -15, 7, Math.PI, 0, false);
+            ctx.fill();
+          } else {
+            // Standaard soldaat chute
+            ctx.fillStyle = theme ? theme.chute : '#ff55ff';
+            ctx.beginPath();
+            ctx.arc(0, -15, 14, Math.PI, 0, false);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(0, -15, 7, Math.PI, 0, false);
+            ctx.fill();
+          }
+        }
+
+        // Uniform en helm per type parachutist
+        if (type === 'speed') {
+          // Speedster: rode helm met vizier, feloranje pak
+          ctx.fillStyle = '#ff5555';
+          ctx.fillRect(-3, -8, 6, 5);
           ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.arc(0, -15, 7, Math.PI, 0, false);
-          ctx.fill();
-        }
+          ctx.fillRect(-2, -6, 4, 2); // Vizier
 
-        ctx.fillStyle = '#ffff55';
-        ctx.fillRect(-3, -8, 6, 5);
+          ctx.fillStyle = '#ff9922';
+          ctx.fillRect(-4, -3, 8, 6);
 
-        ctx.fillStyle = '#55ffff';
-        ctx.fillRect(-4, -3, 8, 6);
+          ctx.fillStyle = '#ff5555';
+          if (isFalling && Math.floor(frameCount / 4) % 2 === 0) {
+            ctx.fillRect(-7, -7, 3, 4);
+            ctx.fillRect(4, -7, 3, 4);
+          } else {
+            ctx.fillRect(-6, -3, 2, 5);
+            ctx.fillRect(4, -3, 2, 5);
+          }
 
-        ctx.fillStyle = '#ffff55';
-        if (isFalling && Math.floor(frameCount / 4) % 2 === 0) {
-          ctx.fillRect(-7, -7, 3, 4);
-          ctx.fillRect(4, -7, 3, 4);
+          ctx.fillStyle = '#ffff55';
+          ctx.fillRect(-4, 3, 3, 5);
+          ctx.fillRect(1, 3, 3, 5);
+        } else if (type === 'heavy') {
+          // Heavy: bredere gepantserde torso en zware helm
+          ctx.fillStyle = '#aaddff';
+          ctx.fillRect(-4, -9, 8, 6);
+
+          // Pantserplaat (kleurt lichter als pantser nog heel is)
+          ctx.fillStyle = (hp === undefined || hp > 1) ? '#3399ff' : '#778899';
+          ctx.fillRect(-5, -3, 10, 7);
+          if (hp === undefined || hp > 1) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-3, -2, 6, 2); // Borstpantser glans
+          }
+
+          ctx.fillStyle = '#aaddff';
+          if (isFalling && Math.floor(frameCount / 4) % 2 === 0) {
+            ctx.fillRect(-8, -7, 3, 4);
+            ctx.fillRect(5, -7, 3, 4);
+          } else {
+            ctx.fillRect(-7, -3, 2, 5);
+            ctx.fillRect(5, -3, 2, 5);
+          }
+
+          ctx.fillStyle = '#225599';
+          ctx.fillRect(-4, 4, 3, 5);
+          ctx.fillRect(1, 4, 3, 5);
+        } else if (type === 'vip') {
+          // Gouden VIP: kroontje/gouden helm en glinsterend goud pak
+          ctx.fillStyle = '#ffff55';
+          ctx.fillRect(-3, -9, 6, 6);
+          ctx.fillStyle = '#ff55ff';
+          ctx.fillRect(-2, -10, 4, 2); // Kroon-accent
+
+          ctx.fillStyle = (Math.floor(frameCount / 4) % 2 === 0) ? '#ffdd22' : '#ffffff';
+          ctx.fillRect(-4, -3, 8, 6);
+
+          ctx.fillStyle = '#ffff55';
+          if (isFalling && Math.floor(frameCount / 4) % 2 === 0) {
+            ctx.fillRect(-7, -7, 3, 4);
+            ctx.fillRect(4, -7, 3, 4);
+          } else {
+            ctx.fillRect(-6, -3, 2, 5);
+            ctx.fillRect(4, -3, 2, 5);
+          }
+
+          ctx.fillStyle = '#ff8800';
+          ctx.fillRect(-4, 3, 3, 5);
+          ctx.fillRect(1, 3, 3, 5);
         } else {
-          ctx.fillRect(-6, -3, 2, 5);
-          ctx.fillRect(4, -3, 2, 5);
-        }
+          // Standaard soldaat
+          ctx.fillStyle = '#ffff55';
+          ctx.fillRect(-3, -8, 6, 5);
 
-        ctx.fillStyle = '#ff55ff';
-        ctx.fillRect(-4, 3, 3, 5);
-        ctx.fillRect(1, 3, 3, 5);
+          ctx.fillStyle = '#55ffff';
+          ctx.fillRect(-4, -3, 8, 6);
+
+          ctx.fillStyle = '#ffff55';
+          if (isFalling && Math.floor(frameCount / 4) % 2 === 0) {
+            ctx.fillRect(-7, -7, 3, 4);
+            ctx.fillRect(4, -7, 3, 4);
+          } else {
+            ctx.fillRect(-6, -3, 2, 5);
+            ctx.fillRect(4, -3, 2, 5);
+          }
+
+          ctx.fillStyle = '#ff55ff';
+          ctx.fillRect(-4, 3, 3, 5);
+          ctx.fillRect(1, 3, 3, 5);
+        }
 
         ctx.restore();
       }
@@ -1218,40 +1376,34 @@
         ctx.translate(Math.round(a.x), Math.round(a.y));
         ctx.scale(a.dir, 1);
 
-        if (a.type === 'mega') {
-          const hue = (frameCount * 8) % 360;
-          ctx.fillStyle = 'hsl(' + hue + ', 100%, 60%)';
-          ctx.fillRect(-42, -10, 74, 20);
-
-          ctx.fillStyle = 'hsl(' + ((hue + 90) % 360) + ', 100%, 62%)';
+        if (a.isMega) {
+          // Groot Regenboog Megavliegtuig (100 punten)
+          const rainbowHue = (frameCount * 8) % 360;
+          ctx.fillStyle = 'hsl(' + rainbowHue + ', 100%, 60%)';
           ctx.beginPath();
-          ctx.moveTo(32, -10);
-          ctx.lineTo(50, 2);
-          ctx.lineTo(32, 10);
+          ctx.moveTo(48, 4);
+          ctx.lineTo(-38, -12);
+          ctx.lineTo(-48, -22);
+          ctx.lineTo(-42, 12);
+          ctx.lineTo(28, 12);
           ctx.closePath();
           ctx.fill();
 
+          // Regenboog streep op romp
+          ctx.fillStyle = 'hsl(' + ((rainbowHue + 120) % 360) + ', 100%, 65%)';
+          ctx.fillRect(-30, -2, 60, 6);
+
+          // Cockpit & ramen
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(26, -6, 12, 6);
+          ctx.fillRect(14, -7, 16, 6);
+          ctx.fillStyle = '#ffff55';
+          ctx.fillRect(-16, -6, 6, 4);
+          ctx.fillRect(-4, -6, 6, 4);
 
-          ctx.fillStyle = 'hsl(' + ((hue + 180) % 360) + ', 100%, 60%)';
-          ctx.beginPath();
-          ctx.moveTo(-24, -10);
-          ctx.lineTo(-46, -24);
-          ctx.lineTo(-42, -10);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.fillRect(-12, 4, 26, 8);
-
-          ctx.fillStyle = 'hsl(' + ((hue + 270) % 360) + ', 100%, 65%)';
-          ctx.fillRect(-38, -2, 66, 4);
-
-          if (a.rotorTick % 3 !== 0) {
+          // Dubbele navlam
+          if (a.rotorTick % 2 === 0) {
             ctx.fillStyle = '#ffff55';
-            ctx.fillRect(-52, -6, 10, 4);
-            ctx.fillStyle = '#ff5555';
-            ctx.fillRect(-52, 2, 10, 4);
+            ctx.fillRect(-58, -4, 14, 10);
           }
         } else if (a.type === 'heli') {
           ctx.fillStyle = theme.heli;
@@ -1351,20 +1503,20 @@
 
         for (let i = 0; i < paratroopers.length; i++) {
           const p = paratroopers[i];
-          drawTrooper(p.x, p.y, p.hasChute, !p.hasChute, theme);
+          drawTrooper(p.x, p.y, p.hasChute, !p.hasChute, theme, p.type, p.hp);
         }
 
         if (gameState !== 'ASSAULT') {
           for (let i = 0; i < landedLeft.length; i++) {
-            drawTrooper(landedLeft[i].x, landedLeft[i].y - 8, false, false, theme);
+            drawTrooper(landedLeft[i].x, landedLeft[i].y - 8, false, false, theme, landedLeft[i].type, 1);
           }
           for (let i = 0; i < landedRight.length; i++) {
-            drawTrooper(landedRight[i].x, landedRight[i].y - 8, false, false, theme);
+            drawTrooper(landedRight[i].x, landedRight[i].y - 8, false, false, theme, landedRight[i].type, 1);
           }
         } else if (assaultSquad) {
           for (let i = 0; i < assaultSquad.troopers.length; i++) {
             const t = assaultSquad.troopers[i];
-            drawTrooper(t.x, t.y - 8, false, false, theme);
+            drawTrooper(t.x, t.y - 8, false, false, theme, t.type, 1);
           }
         }
 
