@@ -25,9 +25,21 @@
       overflow: hidden;
     }
 
+    #main-stage {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 1280px;
+      padding: 0 12px;
+    }
+
     #arcade-cabinet {
       position: relative;
-      width: 100%;
+      flex: 1 1 auto;
+      min-width: 0;
       max-width: 900px;
       aspect-ratio: 4 / 3;
       background: #03030c;
@@ -194,78 +206,89 @@
       padding: 0 10px;
     }
 
-    /* Admin Abuse Console */
+    /* Admin Abuse Console naast de game */
     #admin-panel {
-      position: absolute;
-      top: 48px;
-      right: 14px;
-      width: 295px;
-      max-height: calc(100% - 62px);
-      overflow-y: auto;
-      background: rgba(12, 6, 24, 0.96);
-      border: 2px solid #ff55ff;
-      border-radius: 8px;
-      padding: 10px;
-      z-index: 12;
-      box-shadow: 0 0 24px rgba(255, 85, 255, 0.55);
+      flex: 0 0 300px;
+      width: 300px;
+      height: 75vh;
+      max-height: 675px;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: #ff55ff #120624;
+      background: rgba(12, 6, 24, 0.98);
+      border: 4px solid #ff55ff;
+      border-radius: 10px;
+      padding: 0 12px 12px 12px;
+      box-shadow: 0 0 28px rgba(255, 85, 255, 0.45), inset 0 0 18px rgba(0, 0, 0, 0.85);
       font-size: 11px;
       color: #ffffff;
+    }
+
+    #admin-panel::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #admin-panel::-webkit-scrollbar-track {
+      background: #0d051a;
+      border-radius: 6px;
+    }
+
+    #admin-panel::-webkit-scrollbar-thumb {
+      background: #ff55ff;
+      border-radius: 6px;
+      border: 2px solid #55ffff;
+    }
+
+    #admin-panel::-webkit-scrollbar-thumb:hover {
+      background: #ffff55;
     }
 
     #admin-panel.hidden {
       display: none;
     }
 
+    @media (max-width: 720px) {
+      #admin-panel {
+        flex: 0 0 230px;
+        width: 230px;
+      }
+    }
+
     .admin-header {
+      position: sticky;
+      top: 0;
+      background: rgba(12, 6, 24, 0.98);
+      z-index: 2;
       display: flex;
       justify-content: space-between;
       align-items: center;
       color: #ff55ff;
-      border-bottom: 1px solid #ff55ff;
-      padding-bottom: 6px;
+      border-bottom: 2px solid #ff55ff;
+      padding: 10px 0 8px 0;
       margin-bottom: 8px;
-      font-size: 12px;
+      font-size: 11.5px;
     }
 
-    .admin-section-title {
-      color: #ffff55;
-      font-size: 10px;
-      margin-top: 6px;
-      margin-bottom: 2px;
-      letter-spacing: 1px;
+    .admin-scroll-controls {
+      display: flex;
+      gap: 4px;
+      align-items: center;
     }
 
-    .admin-close {
-      background: transparent;
-      border: 1px solid #ff5555;
-      color: #ff5555;
+    .admin-scroll-btn {
+      background: #1a1233;
+      border: 1px solid #55ffff;
+      color: #55ffff;
       font-family: inherit;
       font-weight: bold;
+      font-size: 10px;
       padding: 2px 6px;
       cursor: pointer;
       border-radius: 4px;
     }
 
-    .admin-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .admin-btn {
-      background: #1a1233;
-      color: #55ffff;
-      border: 1px solid #55ffff;
-      border-radius: 5px;
-      padding: 6px 8px;
-      font-family: inherit;
-      font-weight: bold;
-      font-size: 10.5px;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .admin-btn:hover {
+    .admin-scroll-btn:hover {
       background: #55ffff;
       color: #000000;
     }
@@ -289,23 +312,49 @@
 </head>
 <body>
 
-  <div id="arcade-cabinet">
-    <div id="hud">
-      <div class="hud-group">
-        <div>SCORE: <span id="score" class="score-val">00000</span></div>
-        <div>HIGH: <span id="highscore" class="hi-val">00000</span></div>
+  <div id="main-stage">
+    <div id="arcade-cabinet">
+      <div id="hud">
+        <div class="hud-group">
+          <div>SCORE: <span id="score" class="score-val">00000</span></div>
+          <div>HIGH: <span id="highscore" class="hi-val">00000</span></div>
+        </div>
+        <div class="hud-group">
+          <div>GOLF: <span id="wave" class="wave-val">1</span></div>
+          <button id="pause-btn" type="button">PAUZE</button>
+          <button id="sound-btn" type="button">GELUID: AAN</button>
+        </div>
       </div>
-      <div class="hud-group">
-        <div>GOLF: <span id="wave" class="wave-val">1</span></div>
-        <button id="pause-btn" type="button">PAUZE</button>
-        <button id="sound-btn" type="button">GELUID: AAN</button>
+
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+      <div class="crt-overlay"></div>
+
+      <div id="overlay">
+        <h1 id="overlay-title">PARATROOPER</h1>
+        <p id="overlay-subtitle" class="subtitle">VERDEDIG JE BASIS TEGEN LANDENDE PARACHUTISTEN!</p>
+        
+        <div class="legend">
+          <div><span class="cyan">HELIKOPTER / JET:</span> +25 PT (MEGA: +100 PT)</div>
+          <div><span class="yellow">PARACHUTE KAPOT:</span> +15 PT (+10 PT BIJ VAL)</div>
+          <div><span class="magenta">SOLDAAT / SPEEDSTER (SNEL):</span> +25 / +40 PT</div>
+          <div><span class="cyan">HEAVY (2 HP) / GOUDEN VIP:</span> +50 / +75 PT</div>
+          <div><span class="red">ELK SCHOT KOST:</span> -1 PT (SCORE KAN NEGATIEF!)</div>
+          <div><span class="red">GEVAAR:</span> 4 GELAND AAN 1 KANT = AANVAL!</div>
+          <div style="margin-top:8px; color:#55ff55;">MUIS = RICHTEN &amp; KLIKKEN | PIJLTJES / A-D + SPATIE</div>
+        </div>
+
+        <button id="start-btn" type="button">START SPEL</button>
       </div>
     </div>
 
     <div id="admin-panel" class="hidden">
       <div class="admin-header">
-        <span>[ADMIN ABUSE MENU v2.0]</span>
-        <button id="admin-close-btn" class="admin-close" type="button">X</button>
+        <span>[ADMIN ABUSE]</span>
+        <div class="admin-scroll-controls">
+          <button id="admin-scroll-up" class="admin-scroll-btn" type="button" title="Scroll omhoog">&uarr;</button>
+          <button id="admin-scroll-down" class="admin-scroll-btn" type="button" title="Scroll omlaag">&darr;</button>
+          <button id="admin-close-btn" class="admin-close" type="button">X</button>
+        </div>
       </div>
       <div class="admin-grid">
         <div class="admin-section-title">-- WAPENS &amp; CHEATS --</div>
@@ -313,45 +362,33 @@
         <button id="adm-laser" class="admin-btn" type="button">MEGA LASERSTRAAL: UIT</button>
         <button id="adm-bigbullets" class="admin-btn" type="button">REUZENKOGELS: UIT</button>
         <button id="adm-autoaim" class="admin-btn" type="button">AUTO-AIM AIMBOT: UIT</button>
+        <button id="adm-doublepts" class="admin-btn" type="button">2X DUBBELE PUNTEN: UIT</button>
         <button id="adm-god" class="admin-btn" type="button">GOD MODE (ONSTERFELIJK): UIT</button>
 
         <div class="admin-section-title">-- WERELD &amp; TIJD --</div>
         <button id="adm-slowmo" class="admin-btn" type="button">MATRIX SLOW-MOTION: UIT</button>
+        <button id="adm-fastmo" class="admin-btn" type="button">TURBO HYPER-SNELHEID (2.5X): UIT</button>
+        <button id="adm-freeze" class="admin-btn" type="button">BEVRIES ALLE VIJANDEN: UIT</button>
         <button id="adm-zerog" class="admin-btn" type="button">NUL-ZWAARTEKRACHT (ZWEVEN): UIT</button>
         <button id="adm-wind" class="admin-btn" type="button">TORNADO-WINDSTORM: UIT</button>
+        <button id="adm-blackhole" class="admin-btn" type="button">ZWART GAT IN DE LUCHT: UIT</button>
         <button id="adm-disco" class="admin-btn" type="button">DISCO STROBOSCOOP: UIT</button>
         <button id="adm-rainbow" class="admin-btn" type="button">GA NAAR REGENBOOG LEVEL</button>
 
         <div class="admin-section-title">-- SPAWNS &amp; CHAOS --</div>
         <button id="adm-score" class="admin-btn" type="button">+5000 SCORE</button>
+        <button id="adm-negscore" class="admin-btn danger" type="button">-1000 SCORE (TROLL)</button>
         <button id="adm-bulletnova" class="admin-btn" type="button">360° KOGELSTORM (NOVA)</button>
+        <button id="adm-lightning" class="admin-btn" type="button">BLIKSEMINSLAG OP VIJANDEN</button>
         <button id="adm-popchutes" class="admin-btn" type="button">POP ALLE PARACHUTES</button>
+        <button id="adm-clonetroops" class="admin-btn" type="button">KLOON ALLE PARACHUTISTEN (2X)</button>
         <button id="adm-gianttroops" class="admin-btn" type="button">REUZEN-PARACHUTISTEN (2X): UIT</button>
         <button id="adm-mega" class="admin-btn" type="button">SPAWN 100PT MEGAVLIEGTUIG</button>
         <button id="adm-viprain" class="admin-btn" type="button">SPAWN GOUDEN VIP-REGEN (10x)</button>
+        <button id="adm-heavyraid" class="admin-btn" type="button">SPAWN HEAVY PANTZER-REGEN (8x)</button>
         <button id="adm-airraid" class="admin-btn danger" type="button">CHAOS: VLIEGTUIG-INVASIE (8x)</button>
         <button id="adm-nuke" class="admin-btn danger" type="button">NUKE ALLES IN DE LUCHT</button>
       </div>
-    </div>
-
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <div class="crt-overlay"></div>
-
-    <div id="overlay">
-      <h1 id="overlay-title">PARATROOPER</h1>
-      <p id="overlay-subtitle" class="subtitle">VERDEDIG JE BASIS TEGEN LANDENDE PARACHUTISTEN!</p>
-      
-      <div class="legend">
-        <div><span class="cyan">HELIKOPTER / JET:</span> +25 PT (MEGA: +100 PT)</div>
-        <div><span class="yellow">PARACHUTE KAPOT:</span> +15 PT (+10 PT BIJ VAL)</div>
-        <div><span class="magenta">SOLDAAT / SPEEDSTER (SNEL):</span> +25 / +40 PT</div>
-        <div><span class="cyan">HEAVY (2 HP) / GOUDEN VIP:</span> +50 / +75 PT</div>
-        <div><span class="red">ELK SCHOT KOST:</span> -1 PT (SCORE KAN NEGATIEF!)</div>
-        <div><span class="red">GEVAAR:</span> 4 GELAND AAN 1 KANT = AANVAL!</div>
-        <div style="margin-top:8px; color:#55ff55;">MUIS = RICHTEN &amp; KLIKKEN | PIJLTJES / A-D + SPATIE</div>
-      </div>
-
-      <button id="start-btn" type="button">START SPEL</button>
     </div>
   </div>
 
@@ -379,6 +416,8 @@
       // Admin panel elementen
       const adminPanel = document.getElementById('admin-panel');
       const adminCloseBtn = document.getElementById('admin-close-btn');
+      const adminScrollUpBtn = document.getElementById('admin-scroll-up');
+      const adminScrollDownBtn = document.getElementById('admin-scroll-down');
       const admScoreBtn = document.getElementById('adm-score');
       const admRainbowBtn = document.getElementById('adm-rainbow');
       const admMegaBtn = document.getElementById('adm-mega');
@@ -386,15 +425,23 @@
       const admLaserBtn = document.getElementById('adm-laser');
       const admBigBulletsBtn = document.getElementById('adm-bigbullets');
       const admAutoAimBtn = document.getElementById('adm-autoaim');
+      const admDoublePtsBtn = document.getElementById('adm-doublepts');
       const admGodBtn = document.getElementById('adm-god');
       const admSlowMoBtn = document.getElementById('adm-slowmo');
+      const admFastMoBtn = document.getElementById('adm-fastmo');
+      const admFreezeBtn = document.getElementById('adm-freeze');
       const admZeroGBtn = document.getElementById('adm-zerog');
       const admWindBtn = document.getElementById('adm-wind');
+      const admBlackHoleBtn = document.getElementById('adm-blackhole');
       const admDiscoBtn = document.getElementById('adm-disco');
+      const admNegScoreBtn = document.getElementById('adm-negscore');
       const admBulletNovaBtn = document.getElementById('adm-bulletnova');
+      const admLightningBtn = document.getElementById('adm-lightning');
       const admPopChutesBtn = document.getElementById('adm-popchutes');
+      const admCloneTroopsBtn = document.getElementById('adm-clonetroops');
       const admGiantTroopsBtn = document.getElementById('adm-gianttroops');
       const admVipRainBtn = document.getElementById('adm-viprain');
+      const admHeavyRaidBtn = document.getElementById('adm-heavyraid');
       const admAirRaidBtn = document.getElementById('adm-airraid');
       const admNukeBtn = document.getElementById('adm-nuke');
 
@@ -563,15 +610,20 @@
         laserBeam: false,
         bigBullets: false,
         autoAim: false,
+        doublePoints: false,
         godMode: false,
         slowMo: false,
+        fastMo: false,
+        freezeEnemies: false,
         zeroGravity: false,
         tornadoWind: false,
+        blackHole: false,
         discoMode: false,
         giantTroops: false
       };
       let secretBuffer = '';
       let laserVisualTimer = 0;
+      let lightningBolts = [];
 
       const stars = [];
       for (let i = 0; i < 65; i++) {
@@ -623,6 +675,18 @@
       adminCloseBtn.addEventListener('click', function () {
         adminPanel.classList.add('hidden');
       });
+
+      adminScrollUpBtn.addEventListener('click', function () {
+        adminPanel.scrollBy({ top: -180, behavior: 'smooth' });
+      });
+
+      adminScrollDownBtn.addEventListener('click', function () {
+        adminPanel.scrollBy({ top: 180, behavior: 'smooth' });
+      });
+
+      adminPanel.addEventListener('wheel', function (e) {
+        e.stopPropagation();
+      }, { passive: true });
 
       admScoreBtn.addEventListener('click', function () {
         addScore(5000, TURRET_X, TURRET_Y - 40, '#55ff55');
@@ -686,6 +750,13 @@
         if (adminCheats.autoAim) announceAdmin('AIMBOT INGESCHAKELD!', '#55ff55');
       });
 
+      admDoublePtsBtn.addEventListener('click', function () {
+        adminCheats.doublePoints = !adminCheats.doublePoints;
+        admDoublePtsBtn.textContent = '2X DUBBELE PUNTEN: ' + (adminCheats.doublePoints ? 'AAN' : 'UIT');
+        admDoublePtsBtn.classList.toggle('active', adminCheats.doublePoints);
+        if (adminCheats.doublePoints) announceAdmin('2X PUNTEN ACTIEF!', '#ffff55');
+      });
+
       admGodBtn.addEventListener('click', function () {
         adminCheats.godMode = !adminCheats.godMode;
         admGodBtn.textContent = 'GOD MODE (ONSTERFELIJK): ' + (adminCheats.godMode ? 'AAN' : 'UIT');
@@ -699,9 +770,33 @@
 
       admSlowMoBtn.addEventListener('click', function () {
         adminCheats.slowMo = !adminCheats.slowMo;
+        if (adminCheats.slowMo) {
+          adminCheats.fastMo = false;
+          admFastMoBtn.textContent = 'TURBO HYPER-SNELHEID (2.5X): UIT';
+          admFastMoBtn.classList.remove('active');
+        }
         admSlowMoBtn.textContent = 'MATRIX SLOW-MOTION: ' + (adminCheats.slowMo ? 'AAN' : 'UIT');
         admSlowMoBtn.classList.toggle('active', adminCheats.slowMo);
         if (adminCheats.slowMo) announceAdmin('SLOW-MOTION AAN!', '#55ffff');
+      });
+
+      admFastMoBtn.addEventListener('click', function () {
+        adminCheats.fastMo = !adminCheats.fastMo;
+        if (adminCheats.fastMo) {
+          adminCheats.slowMo = false;
+          admSlowMoBtn.textContent = 'MATRIX SLOW-MOTION: UIT';
+          admSlowMoBtn.classList.remove('active');
+        }
+        admFastMoBtn.textContent = 'TURBO HYPER-SNELHEID (2.5X): ' + (adminCheats.fastMo ? 'AAN' : 'UIT');
+        admFastMoBtn.classList.toggle('active', adminCheats.fastMo);
+        if (adminCheats.fastMo) announceAdmin('HYPER-SNELHEID 2.5X!', '#ff5555');
+      });
+
+      admFreezeBtn.addEventListener('click', function () {
+        adminCheats.freezeEnemies = !adminCheats.freezeEnemies;
+        admFreezeBtn.textContent = 'BEVRIES ALLE VIJANDEN: ' + (adminCheats.freezeEnemies ? 'AAN' : 'UIT');
+        admFreezeBtn.classList.toggle('active', adminCheats.freezeEnemies);
+        if (adminCheats.freezeEnemies) announceAdmin('VIJANDEN BEVROREN!', '#55ffff');
       });
 
       admZeroGBtn.addEventListener('click', function () {
@@ -718,6 +813,13 @@
         if (adminCheats.tornadoWind) announceAdmin('TORNADO-WINDSTORM ACTIEF!', '#55ffff');
       });
 
+      admBlackHoleBtn.addEventListener('click', function () {
+        adminCheats.blackHole = !adminCheats.blackHole;
+        admBlackHoleBtn.textContent = 'ZWART GAT IN DE LUCHT: ' + (adminCheats.blackHole ? 'AAN' : 'UIT');
+        admBlackHoleBtn.classList.toggle('active', adminCheats.blackHole);
+        if (adminCheats.blackHole) announceAdmin('ZWART GAT GEOPEND!', '#aa66ff');
+      });
+
       admDiscoBtn.addEventListener('click', function () {
         adminCheats.discoMode = !adminCheats.discoMode;
         admDiscoBtn.textContent = 'DISCO STROBOSCOOP: ' + (adminCheats.discoMode ? 'AAN' : 'UIT');
@@ -730,6 +832,87 @@
         admGiantTroopsBtn.textContent = 'REUZEN-PARACHUTISTEN (2X): ' + (adminCheats.giantTroops ? 'AAN' : 'UIT');
         admGiantTroopsBtn.classList.toggle('active', adminCheats.giantTroops);
         if (adminCheats.giantTroops) announceAdmin('REUZEN-PARACHUTISTEN!', '#ffff55');
+      });
+
+      admNegScoreBtn.addEventListener('click', function () {
+        addScore(-1000, TURRET_X, TURRET_Y - 40, '#ff5555');
+        playSound('splat');
+      });
+
+      admLightningBtn.addEventListener('click', function () {
+        let struck = 0;
+        const targets = [];
+        for (let i = 0; i < aircrafts.length && targets.length < 5; i++) {
+          targets.push({ kind: 'air', idx: i, x: aircrafts[i].x, y: aircrafts[i].y });
+        }
+        for (let i = 0; i < paratroopers.length && targets.length < 7; i++) {
+          targets.push({ kind: 'para', idx: i, x: paratroopers[i].x, y: paratroopers[i].y });
+        }
+
+        targets.forEach(function (t) {
+          lightningBolts.push({ targetX: t.x, targetY: t.y, life: 16 });
+          createExplosion(t.x, t.y, ['#ffff55', '#ffffff', '#55ffff'], 24);
+          struck++;
+        });
+
+        for (let i = targets.length - 1; i >= 0; i--) {
+          const t = targets[i];
+          if (t.kind === 'air' && aircrafts[t.idx]) {
+            addScore(aircrafts[t.idx].points || 25, t.x, t.y - 10, '#ffff55');
+            aircrafts.splice(t.idx, 1);
+          } else if (t.kind === 'para' && paratroopers[t.idx]) {
+            addScore(paratroopers[t.idx].points || 25, t.x, t.y - 10, '#ffff55');
+            paratroopers.splice(t.idx, 1);
+          }
+        }
+
+        if (struck > 0) {
+          playSound('explosion');
+          announceAdmin('BLIKSEMINSLAG (' + struck + 'x)!', '#ffff55');
+        }
+      });
+
+      admCloneTroopsBtn.addEventListener('click', function () {
+        const current = paratroopers.slice();
+        if (current.length === 0) return;
+        current.forEach(function (p) {
+          const offsetX = Math.max(24, Math.min(W - 24, p.x + (Math.random() < 0.5 ? -28 : 28)));
+          paratroopers.push({
+            x: offsetX,
+            y: p.y - 10,
+            vy: p.vy,
+            type: p.type,
+            hp: p.hp,
+            maxHp: p.maxHp,
+            points: p.points,
+            hasChute: p.hasChute,
+            fallSpeed: p.fallSpeed,
+            swayOffset: Math.random() * Math.PI * 2
+          });
+        });
+        playSound('chute');
+        announceAdmin('PARACHUTISTEN GEKLOOND!', '#55ff55');
+      });
+
+      admHeavyRaidBtn.addEventListener('click', function () {
+        for (let i = 0; i < 8; i++) {
+          const rx = 50 + Math.random() * (W - 100);
+          const ry = 35 + Math.random() * 90;
+          paratroopers.push({
+            x: rx,
+            y: ry,
+            vy: 1.0,
+            type: 'heavy',
+            hp: 2,
+            maxHp: 2,
+            points: 50,
+            hasChute: true,
+            fallSpeed: 0,
+            swayOffset: Math.random() * Math.PI * 2
+          });
+        }
+        playSound('chute');
+        announceAdmin('HEAVY PANTSER-REGEN!', '#55ffff');
       });
 
       admBulletNovaBtn.addEventListener('click', function () {
@@ -902,7 +1085,8 @@
       }
 
       function addScore(pts, x, y, color) {
-        score += pts;
+        const finalPts = (pts > 0 && adminCheats.doublePoints) ? pts * 2 : pts;
+        score += finalPts;
         updateScoreUI();
 
         if (score > highScore) {
@@ -938,7 +1122,7 @@
           floatingTexts.push({
             x: x,
             y: y,
-            text: pts > 0 ? '+' + pts : String(pts),
+            text: finalPts > 0 ? '+' + finalPts : String(finalPts),
             color: color || '#ffff55',
             life: 45,
             vy: -0.8
@@ -1206,8 +1390,12 @@
         if (isPaused) return;
         frameCount++;
         if (laserVisualTimer > 0) laserVisualTimer--;
+        for (let i = lightningBolts.length - 1; i >= 0; i--) {
+          lightningBolts[i].life--;
+          if (lightningBolts[i].life <= 0) lightningBolts.splice(i, 1);
+        }
 
-        const timeScale = adminCheats.slowMo ? 0.35 : 1.0;
+        const timeScale = adminCheats.freezeEnemies ? 0 : (adminCheats.slowMo ? 0.35 : (adminCheats.fastMo ? 2.5 : 1.0));
 
         if (gameState === 'PLAYING') {
           // Auto-Aim Aimbot richt automatisch op dichtstbijzijnde gevaar en vuurt!
@@ -1339,10 +1527,29 @@
 
         for (let i = aircrafts.length - 1; i >= 0; i--) {
           const a = aircrafts[i];
+          if (adminCheats.blackHole) {
+            const bhX = W / 2;
+            const bhY = 175;
+            const dx = bhX - a.x;
+            const dy = bhY - a.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 26) {
+              createExplosion(bhX, bhY, ['#aa66ff', '#ff55ff', '#ffffff'], 25);
+              playSound('explosion');
+              addScore(a.points || 25, bhX, bhY - 15, '#aa66ff');
+              aircrafts.splice(i, 1);
+              continue;
+            }
+            a.x += (dx / dist) * 4.5 + (-dy / dist) * 2.5;
+            a.y += (dy / dist) * 4.5 + (dx / dist) * 2.5;
+            a.rotorTick++;
+            continue;
+          }
+
           a.x += a.dir * a.speed * timeScale;
           a.rotorTick++;
 
-          if (gameState === 'PLAYING' && a.dropsLeft > 0) {
+          if (gameState === 'PLAYING' && timeScale > 0 && a.dropsLeft > 0) {
             const passedDrop = (a.dir === 1 && a.x >= a.nextDropX) || (a.dir === -1 && a.x <= a.nextDropX);
             if (passedDrop) {
               spawnParatrooper(a.x, a.y, a.isMega);
@@ -1362,7 +1569,25 @@
         for (let i = paratroopers.length - 1; i >= 0; i--) {
           const p = paratroopers[i];
 
-          if (adminCheats.tornadoWind) {
+          if (adminCheats.blackHole) {
+            const bhX = W / 2;
+            const bhY = 175;
+            const dx = bhX - p.x;
+            const dy = bhY - p.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 24) {
+              createExplosion(bhX, bhY, ['#aa66ff', '#55ffff', '#ffffff'], 18);
+              playSound('explosion');
+              addScore(p.points || 25, bhX, bhY - 15, '#aa66ff');
+              paratroopers.splice(i, 1);
+              continue;
+            }
+            p.x += (dx / dist) * 4.8 + (-dy / dist) * 2.8;
+            p.y += (dy / dist) * 4.8 + (dx / dist) * 2.8;
+            continue;
+          }
+
+          if (adminCheats.tornadoWind && timeScale > 0) {
             p.x += Math.sin(frameCount * 0.08 + p.swayOffset) * 5.5 * timeScale;
             p.x = Math.max(20, Math.min(W - 20, p.x));
           }
@@ -1370,7 +1595,7 @@
           if (adminCheats.zeroGravity) {
             // Zweef langzaam omhoog en wiebel in de lucht
             p.y = Math.max(40, p.y - 0.65 * timeScale);
-            p.x += Math.sin(frameCount * 0.06 + p.swayOffset) * 1.1;
+            p.x += Math.sin(frameCount * 0.06 + p.swayOffset) * 1.1 * timeScale;
             continue;
           }
 
@@ -1767,6 +1992,30 @@
         ctx.fillStyle = theme.groundFill;
         ctx.fillRect(0, GROUND_Y + 4, W, H - GROUND_Y - 4);
 
+        // Zwart Gat tekenen indien actief
+        if (adminCheats.blackHole) {
+          ctx.save();
+          ctx.translate(W / 2, 175);
+          const pulse = 24 + Math.sin(frameCount * 0.15) * 4;
+          ctx.strokeStyle = '#aa66ff';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(0, 0, pulse + 8, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.strokeStyle = '#ff55ff';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, pulse + 16, (frameCount * 0.1) % (Math.PI * 2), (frameCount * 0.1) % (Math.PI * 2) + Math.PI * 1.3);
+          ctx.stroke();
+
+          ctx.fillStyle = '#000000';
+          ctx.beginPath();
+          ctx.arc(0, 0, pulse, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
         // Bunker & Kanon tekenen
         drawTurret(theme);
 
@@ -1815,6 +2064,31 @@
           ctx.beginPath();
           ctx.moveTo(TURRET_X, TURRET_Y);
           ctx.lineTo(endX, endY);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Bliksemschichten tekenen indien actief
+        for (let i = 0; i < lightningBolts.length; i++) {
+          const lb = lightningBolts[i];
+          ctx.save();
+          ctx.strokeStyle = '#ffff55';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          let lx = lb.targetX + (Math.random() - 0.5) * 40;
+          let ly = 0;
+          ctx.moveTo(lx, ly);
+          const steps = 6;
+          for (let s = 1; s <= steps; s++) {
+            const t = s / steps;
+            lx = lb.targetX + (s === steps ? 0 : (Math.random() - 0.5) * 36);
+            ly = lb.targetY * t;
+            ctx.lineTo(lx, ly);
+          }
+          ctx.stroke();
+
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2;
           ctx.stroke();
           ctx.restore();
         }
