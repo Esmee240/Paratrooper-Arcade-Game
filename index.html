@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
@@ -308,6 +308,52 @@
       background: #ff5555;
       color: #000000;
     }
+
+    .admin-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .admin-section-title {
+      color: #55ffff;
+      font-size: 10.5px;
+      margin-top: 8px;
+      margin-bottom: 2px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .admin-btn {
+      width: 100%;
+      background: #1a1233;
+      color: #ffffff;
+      border: 1.5px solid #55ffff;
+      border-radius: 5px;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 10.5px;
+      padding: 6px 8px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .admin-btn:hover {
+      background: #55ffff;
+      color: #000000;
+    }
+
+    .admin-close {
+      background: #ff5555;
+      border: 1px solid #ffffff;
+      color: #000000;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 10px;
+      padding: 2px 6px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -361,7 +407,11 @@
         <button id="adm-rapid" class="admin-btn" type="button">3-WAY SNELVUUR (GRATIS): UIT</button>
         <button id="adm-laser" class="admin-btn" type="button">MEGA LASERSTRAAL: UIT</button>
         <button id="adm-bigbullets" class="admin-btn" type="button">REUZENKOGELS: UIT</button>
+        <button id="adm-homing" class="admin-btn" type="button">ZOEKENDE RAKETTEN (HOMING): UIT</button>
+        <button id="adm-ricochet" class="admin-btn" type="button">STUITERKOGELS (RICOCHET): UIT</button>
+        <button id="adm-orbital" class="admin-btn" type="button">ORBITAL SATELLIET-LASER: UIT</button>
         <button id="adm-autoaim" class="admin-btn" type="button">AUTO-AIM AIMBOT: UIT</button>
+        <button id="adm-shield" class="admin-btn" type="button">ENERGIE-SCHILD KOEPEL: UIT</button>
         <button id="adm-doublepts" class="admin-btn" type="button">2X DUBBELE PUNTEN: UIT</button>
         <button id="adm-god" class="admin-btn" type="button">GOD MODE (ONSTERFELIJK): UIT</button>
 
@@ -372,21 +422,32 @@
         <button id="adm-zerog" class="admin-btn" type="button">NUL-ZWAARTEKRACHT (ZWEVEN): UIT</button>
         <button id="adm-wind" class="admin-btn" type="button">TORNADO-WINDSTORM: UIT</button>
         <button id="adm-blackhole" class="admin-btn" type="button">ZWART GAT IN DE LUCHT: UIT</button>
+        <button id="adm-ufo" class="admin-btn" type="button">UFO ONTVOERINGSTRAAL: UIT</button>
+        <button id="adm-magnet" class="admin-btn" type="button">BUNKER SUPER-MAGNEET: UIT</button>
         <button id="adm-disco" class="admin-btn" type="button">DISCO STROBOSCOOP: UIT</button>
+        <button id="adm-upsidedown" class="admin-btn" type="button">OMGEKEERDE WERELD (180°): UIT</button>
         <button id="adm-rainbow" class="admin-btn" type="button">GA NAAR REGENBOOG LEVEL</button>
 
         <div class="admin-section-title">-- SPAWNS &amp; CHAOS --</div>
         <button id="adm-score" class="admin-btn" type="button">+5000 SCORE</button>
         <button id="adm-negscore" class="admin-btn danger" type="button">-1000 SCORE (TROLL)</button>
         <button id="adm-bulletnova" class="admin-btn" type="button">360° KOGELSTORM (NOVA)</button>
+        <button id="adm-meteors" class="admin-btn" type="button">METEORENREGEN UIT DE RUIMTE</button>
+        <button id="adm-earthquake" class="admin-btn" type="button">AARDBEVING (VEEG GROND SCHOON)</button>
         <button id="adm-lightning" class="admin-btn" type="button">BLIKSEMINSLAG OP VIJANDEN</button>
         <button id="adm-popchutes" class="admin-btn" type="button">POP ALLE PARACHUTES</button>
         <button id="adm-clonetroops" class="admin-btn" type="button">KLOON ALLE PARACHUTISTEN (2X)</button>
         <button id="adm-gianttroops" class="admin-btn" type="button">REUZEN-PARACHUTISTEN (2X): UIT</button>
+        <button id="adm-minitroops" class="admin-btn" type="button">MINI-PARACHUTISTEN (0.5X): UIT</button>
+        <button id="adm-fireworks" class="admin-btn" type="button">FEEST VUURWERK-SHOW</button>
+        <button id="adm-clearground" class="admin-btn" type="button">VEEG GELANDE SOLDATEN WEG</button>
         <button id="adm-mega" class="admin-btn" type="button">SPAWN 100PT MEGAVLIEGTUIG</button>
+        <button id="adm-megafleet" class="admin-btn" type="button">REGENBOOG MEGAVLOOT (4x 100PT)</button>
         <button id="adm-viprain" class="admin-btn" type="button">SPAWN GOUDEN VIP-REGEN (10x)</button>
         <button id="adm-heavyraid" class="admin-btn" type="button">SPAWN HEAVY PANTZER-REGEN (8x)</button>
         <button id="adm-airraid" class="admin-btn danger" type="button">CHAOS: VLIEGTUIG-INVASIE (8x)</button>
+        <button id="adm-meltdown" class="admin-btn danger" type="button">TOTAL ADMIN MELTDOWN (ALLES!)</button>
+        <button id="adm-randomchaos" class="admin-btn" type="button">WILLEKEURIGE ADMIN CHAOS (???)</button>
         <button id="adm-nuke" class="admin-btn danger" type="button">NUKE ALLES IN DE LUCHT</button>
       </div>
     </div>
@@ -424,7 +485,11 @@
       const admRapidBtn = document.getElementById('adm-rapid');
       const admLaserBtn = document.getElementById('adm-laser');
       const admBigBulletsBtn = document.getElementById('adm-bigbullets');
+      const admHomingBtn = document.getElementById('adm-homing');
+      const admRicochetBtn = document.getElementById('adm-ricochet');
+      const admOrbitalBtn = document.getElementById('adm-orbital');
       const admAutoAimBtn = document.getElementById('adm-autoaim');
+      const admShieldBtn = document.getElementById('adm-shield');
       const admDoublePtsBtn = document.getElementById('adm-doublepts');
       const admGodBtn = document.getElementById('adm-god');
       const admSlowMoBtn = document.getElementById('adm-slowmo');
@@ -433,16 +498,27 @@
       const admZeroGBtn = document.getElementById('adm-zerog');
       const admWindBtn = document.getElementById('adm-wind');
       const admBlackHoleBtn = document.getElementById('adm-blackhole');
+      const admUfoBtn = document.getElementById('adm-ufo');
+      const admMagnetBtn = document.getElementById('adm-magnet');
       const admDiscoBtn = document.getElementById('adm-disco');
+      const admUpsideDownBtn = document.getElementById('adm-upsidedown');
       const admNegScoreBtn = document.getElementById('adm-negscore');
       const admBulletNovaBtn = document.getElementById('adm-bulletnova');
+      const admMeteorsBtn = document.getElementById('adm-meteors');
+      const admEarthquakeBtn = document.getElementById('adm-earthquake');
       const admLightningBtn = document.getElementById('adm-lightning');
       const admPopChutesBtn = document.getElementById('adm-popchutes');
       const admCloneTroopsBtn = document.getElementById('adm-clonetroops');
       const admGiantTroopsBtn = document.getElementById('adm-gianttroops');
+      const admMiniTroopsBtn = document.getElementById('adm-minitroops');
+      const admFireworksBtn = document.getElementById('adm-fireworks');
+      const admClearGroundBtn = document.getElementById('adm-clearground');
+      const admMegaFleetBtn = document.getElementById('adm-megafleet');
       const admVipRainBtn = document.getElementById('adm-viprain');
       const admHeavyRaidBtn = document.getElementById('adm-heavyraid');
       const admAirRaidBtn = document.getElementById('adm-airraid');
+      const admMeltdownBtn = document.getElementById('adm-meltdown');
+      const admRandomChaosBtn = document.getElementById('adm-randomchaos');
       const admNukeBtn = document.getElementById('adm-nuke');
 
       // ==========================================
@@ -609,7 +685,11 @@
         rapidFire: false,
         laserBeam: false,
         bigBullets: false,
+        homingBullets: false,
+        ricochetBullets: false,
+        orbitalLaser: false,
         autoAim: false,
+        shieldDome: false,
         doublePoints: false,
         godMode: false,
         slowMo: false,
@@ -618,12 +698,21 @@
         zeroGravity: false,
         tornadoWind: false,
         blackHole: false,
+        ufoAbduction: false,
+        bunkerMagnet: false,
         discoMode: false,
-        giantTroops: false
+        upsideDown: false,
+        giantTroops: false,
+        miniTroops: false
       };
       let secretBuffer = '';
       let laserVisualTimer = 0;
+      let screenShakeTimer = 0;
+      let orbitalX = 400;
+      let orbitalDir = 1;
+      let ufoX = 400;
       let lightningBolts = [];
+      let meteors = [];
 
       const stars = [];
       for (let i = 0; i < 65; i++) {
@@ -706,6 +795,16 @@
         playSound('chute');
       });
 
+      admMegaFleetBtn.addEventListener('click', function () {
+        for (let i = 0; i < 4; i++) {
+          setTimeout(function () {
+            spawnMegaAircraft();
+          }, i * 350);
+        }
+        announceAdmin('REGENBOOG MEGAVLOOT (4x)!', '#ff55ff');
+        playSound('chute');
+      });
+
       admVipRainBtn.addEventListener('click', function () {
         for (let i = 0; i < 10; i++) {
           const rx = 50 + Math.random() * (W - 100);
@@ -743,11 +842,39 @@
         admBigBulletsBtn.classList.toggle('active', adminCheats.bigBullets);
       });
 
+      admHomingBtn.addEventListener('click', function () {
+        adminCheats.homingBullets = !adminCheats.homingBullets;
+        admHomingBtn.textContent = 'ZOEKENDE RAKETTEN (HOMING): ' + (adminCheats.homingBullets ? 'AAN' : 'UIT');
+        admHomingBtn.classList.toggle('active', adminCheats.homingBullets);
+        if (adminCheats.homingBullets) announceAdmin('ZOEKENDE RAKETTEN ACTIEF!', '#ff8833');
+      });
+
+      admRicochetBtn.addEventListener('click', function () {
+        adminCheats.ricochetBullets = !adminCheats.ricochetBullets;
+        admRicochetBtn.textContent = 'STUITERKOGELS (RICOCHET): ' + (adminCheats.ricochetBullets ? 'AAN' : 'UIT');
+        admRicochetBtn.classList.toggle('active', adminCheats.ricochetBullets);
+        if (adminCheats.ricochetBullets) announceAdmin('STUITERKOGELS AAN!', '#ffff55');
+      });
+
+      admOrbitalBtn.addEventListener('click', function () {
+        adminCheats.orbitalLaser = !adminCheats.orbitalLaser;
+        admOrbitalBtn.textContent = 'ORBITAL SATELLIET-LASER: ' + (adminCheats.orbitalLaser ? 'AAN' : 'UIT');
+        admOrbitalBtn.classList.toggle('active', adminCheats.orbitalLaser);
+        if (adminCheats.orbitalLaser) announceAdmin('ORBITAL SATELLIET ONLINE!', '#ff5555');
+      });
+
       admAutoAimBtn.addEventListener('click', function () {
         adminCheats.autoAim = !adminCheats.autoAim;
         admAutoAimBtn.textContent = 'AUTO-AIM AIMBOT: ' + (adminCheats.autoAim ? 'AAN' : 'UIT');
         admAutoAimBtn.classList.toggle('active', adminCheats.autoAim);
         if (adminCheats.autoAim) announceAdmin('AIMBOT INGESCHAKELD!', '#55ff55');
+      });
+
+      admShieldBtn.addEventListener('click', function () {
+        adminCheats.shieldDome = !adminCheats.shieldDome;
+        admShieldBtn.textContent = 'ENERGIE-SCHILD KOEPEL: ' + (adminCheats.shieldDome ? 'AAN' : 'UIT');
+        admShieldBtn.classList.toggle('active', adminCheats.shieldDome);
+        if (adminCheats.shieldDome) announceAdmin('ENERGIE-SCHILD GEACTIVEERD!', '#55ffff');
       });
 
       admDoublePtsBtn.addEventListener('click', function () {
@@ -820,6 +947,20 @@
         if (adminCheats.blackHole) announceAdmin('ZWART GAT GEOPEND!', '#aa66ff');
       });
 
+      admUfoBtn.addEventListener('click', function () {
+        adminCheats.ufoAbduction = !adminCheats.ufoAbduction;
+        admUfoBtn.textContent = 'UFO ONTVOERINGSTRAAL: ' + (adminCheats.ufoAbduction ? 'AAN' : 'UIT');
+        admUfoBtn.classList.toggle('active', adminCheats.ufoAbduction);
+        if (adminCheats.ufoAbduction) announceAdmin('UFO IN DE LUCHT!', '#55ff55');
+      });
+
+      admMagnetBtn.addEventListener('click', function () {
+        adminCheats.bunkerMagnet = !adminCheats.bunkerMagnet;
+        admMagnetBtn.textContent = 'BUNKER SUPER-MAGNEET: ' + (adminCheats.bunkerMagnet ? 'AAN' : 'UIT');
+        admMagnetBtn.classList.toggle('active', adminCheats.bunkerMagnet);
+        if (adminCheats.bunkerMagnet) announceAdmin('SUPER-MAGNEET AAN!', '#55ffff');
+      });
+
       admDiscoBtn.addEventListener('click', function () {
         adminCheats.discoMode = !adminCheats.discoMode;
         admDiscoBtn.textContent = 'DISCO STROBOSCOOP: ' + (adminCheats.discoMode ? 'AAN' : 'UIT');
@@ -827,11 +968,63 @@
         if (adminCheats.discoMode) announceAdmin('DISCO PARTY!', '#ff55ff');
       });
 
+      admUpsideDownBtn.addEventListener('click', function () {
+        adminCheats.upsideDown = !adminCheats.upsideDown;
+        admUpsideDownBtn.textContent = 'OMGEKEERDE WERELD (180°): ' + (adminCheats.upsideDown ? 'AAN' : 'UIT');
+        admUpsideDownBtn.classList.toggle('active', adminCheats.upsideDown);
+        if (adminCheats.upsideDown) announceAdmin('WERELD OP ZIJN KOP!', '#ff55ff');
+      });
+
       admGiantTroopsBtn.addEventListener('click', function () {
         adminCheats.giantTroops = !adminCheats.giantTroops;
+        if (adminCheats.giantTroops) {
+          adminCheats.miniTroops = false;
+          admMiniTroopsBtn.textContent = 'MINI-PARACHUTISTEN (0.5X): UIT';
+          admMiniTroopsBtn.classList.remove('active');
+        }
         admGiantTroopsBtn.textContent = 'REUZEN-PARACHUTISTEN (2X): ' + (adminCheats.giantTroops ? 'AAN' : 'UIT');
         admGiantTroopsBtn.classList.toggle('active', adminCheats.giantTroops);
         if (adminCheats.giantTroops) announceAdmin('REUZEN-PARACHUTISTEN!', '#ffff55');
+      });
+
+      admMiniTroopsBtn.addEventListener('click', function () {
+        adminCheats.miniTroops = !adminCheats.miniTroops;
+        if (adminCheats.miniTroops) {
+          adminCheats.giantTroops = false;
+          admGiantTroopsBtn.textContent = 'REUZEN-PARACHUTISTEN (2X): UIT';
+          admGiantTroopsBtn.classList.remove('active');
+        }
+        admMiniTroopsBtn.textContent = 'MINI-PARACHUTISTEN (0.5X): ' + (adminCheats.miniTroops ? 'AAN' : 'UIT');
+        admMiniTroopsBtn.classList.toggle('active', adminCheats.miniTroops);
+        if (adminCheats.miniTroops) announceAdmin('MINI-PARACHUTISTEN!', '#55ffff');
+      });
+
+      admFireworksBtn.addEventListener('click', function () {
+        const fwColors = ['#ff55ff', '#ffff55', '#55ffff', '#55ff55', '#ff5555', '#ffffff'];
+        for (let i = 0; i < 9; i++) {
+          const fx = 90 + Math.random() * (W - 180);
+          const fy = 60 + Math.random() * 220;
+          createExplosion(fx, fy, fwColors, 36);
+        }
+        playSound('explosion');
+        addScore(250, W / 2, 140, '#ff55ff');
+        announceAdmin('ADMIN VUURWERK-SHOW!', '#ffff55');
+      });
+
+      admClearGroundBtn.addEventListener('click', function () {
+        const count = landedLeft.length + landedRight.length;
+        landedLeft.forEach(function (t) {
+          createExplosion(t.x, t.y - 8, ['#55ff55', '#ffffff'], 12);
+        });
+        landedRight.forEach(function (t) {
+          createExplosion(t.x, t.y - 8, ['#55ff55', '#ffffff'], 12);
+        });
+        landedLeft = [];
+        landedRight = [];
+        if (count > 0) {
+          playSound('chute');
+          announceAdmin(count + ' SOLDATEN WEGGEVAAID!', '#55ff55');
+        }
       });
 
       admNegScoreBtn.addEventListener('click', function () {
@@ -950,10 +1143,76 @@
         }
       });
 
+      admMeteorsBtn.addEventListener('click', function () {
+        for (let i = 0; i < 14; i++) {
+          meteors.push({
+            x: 80 + Math.random() * (W + 120),
+            y: -30 - Math.random() * 260,
+            vx: -3.5 - Math.random() * 2.5,
+            vy: 6.5 + Math.random() * 3.5,
+            size: 6 + Math.random() * 6
+          });
+        }
+        playSound('explosion');
+        announceAdmin('METEORENREGEN!', '#ff8833');
+      });
+
+      admEarthquakeBtn.addEventListener('click', function () {
+        screenShakeTimer = 45;
+        let cleared = landedLeft.length + landedRight.length;
+        landedLeft.forEach(function (t) {
+          createExplosion(t.x, t.y - 8, ['#ff8833', '#ffff55', '#ffffff'], 16);
+        });
+        landedRight.forEach(function (t) {
+          createExplosion(t.x, t.y - 8, ['#ff8833', '#ffff55', '#ffffff'], 16);
+        });
+        landedLeft = [];
+        landedRight = [];
+        for (let i = 0; i < paratroopers.length; i++) {
+          paratroopers[i].x += (Math.random() - 0.5) * 80;
+          paratroopers[i].x = Math.max(24, Math.min(W - 24, paratroopers[i].x));
+        }
+        playSound('explosion');
+        if (cleared > 0) {
+          addScore(cleared * 30, TURRET_X, GROUND_Y - 30, '#ff8833');
+        }
+        announceAdmin('AARDBEVING!', '#ff8833');
+      });
+
+      admMeltdownBtn.addEventListener('click', function () {
+        admBulletNovaBtn.click();
+        admMeteorsBtn.click();
+        admLightningBtn.click();
+        admMegaFleetBtn.click();
+        admVipRainBtn.click();
+        admFireworksBtn.click();
+        screenShakeTimer = 60;
+        announceAdmin('TOTAL ADMIN MELTDOWN!!', '#ff5555');
+      });
+
+      admRandomChaosBtn.addEventListener('click', function () {
+        const actions = [
+          function () { admBulletNovaBtn.click(); },
+          function () { admMeteorsBtn.click(); },
+          function () { admLightningBtn.click(); },
+          function () { admVipRainBtn.click(); },
+          function () { admEarthquakeBtn.click(); },
+          function () { admMegaFleetBtn.click(); },
+          function () { admPopChutesBtn.click(); },
+          function () { admFireworksBtn.click(); },
+          function () { admCloneTroopsBtn.click(); }
+        ];
+        const first = Math.floor(Math.random() * actions.length);
+        let second = Math.floor(Math.random() * actions.length);
+        if (second === first) second = (first + 1) % actions.length;
+        actions[first]();
+        actions[second]();
+      });
+
       admNukeBtn.addEventListener('click', function () {
         let bonus = 0;
         aircrafts.forEach(function (a) {
-          createExplosion(a.x, a.y, ['#ff55ff', '#ffff55', '#55ffff'], 28);
+          createExplosion(a.x, a.y, ['#ff5555', '#ffff55', '#ffffff'], 25);
           bonus += (a.points || 25);
         });
         paratroopers.forEach(function (p) {
@@ -1390,47 +1649,77 @@
         if (isPaused) return;
         frameCount++;
         if (laserVisualTimer > 0) laserVisualTimer--;
-        for (let i = lightningBolts.length - 1; i >= 0; i--) {
-          lightningBolts[i].life--;
-          if (lightningBolts[i].life <= 0) lightningBolts.splice(i, 1);
-        }
+        if (screenShakeTimer > 0) screenShakeTimer--;
+        const timeScale = adminCheats.freezeEnemies ? 0 : (adminCheats.slowMo ? 0.35 : (adminCheats.fastMo ? 2.5 : 1));
 
-        const timeScale = adminCheats.freezeEnemies ? 0 : (adminCheats.slowMo ? 0.35 : (adminCheats.fastMo ? 2.5 : 1.0));
-
-        if (gameState === 'PLAYING') {
-          // Auto-Aim Aimbot richt automatisch op dichtstbijzijnde gevaar en vuurt!
+        if (gameState === 'PLAYING' && turret.alive) {
           if (adminCheats.autoAim) {
             let target = null;
             let bestScore = Infinity;
-
             for (let i = 0; i < paratroopers.length; i++) {
-              const p = paratroopers[i];
-              const d = (GROUND_Y - p.y); // Laagste parachutist heeft hoogste prioriteit
-              if (d < bestScore) {
-                bestScore = d;
-                target = p;
+              const distToGround = GROUND_Y - paratroopers[i].y;
+              if (distToGround < bestScore) {
+                bestScore = distToGround;
+                target = paratroopers[i];
               }
             }
             if (!target && aircrafts.length > 0) {
               target = aircrafts[0];
             }
-
             if (target) {
-              const desiredAngle = Math.atan2(target.y - TURRET_Y, target.x - TURRET_X);
-              turret.angle = Math.max(-Math.PI + 0.16, Math.min(-0.16, desiredAngle));
+              const desired = Math.atan2(target.y - TURRET_Y, target.x - TURRET_X);
+              turret.angle = Math.max(-Math.PI + 0.18, Math.min(-0.18, desired));
               fireBullet();
             }
           } else {
             const rotSpeed = 0.048;
             if (keys['ArrowLeft'] || keys['KeyA']) {
-              turret.angle = Math.max(-Math.PI + 0.16, turret.angle - rotSpeed);
+              turret.angle = Math.max(-Math.PI + 0.18, turret.angle - rotSpeed);
             }
             if (keys['ArrowRight'] || keys['KeyD']) {
-              turret.angle = Math.min(-0.16, turret.angle + rotSpeed);
+              turret.angle = Math.min(-0.18, turret.angle + rotSpeed);
             }
             if (keys['Space'] || isMouseDown) {
               fireBullet();
             }
+          }
+        }
+
+        for (let i = lightningBolts.length - 1; i >= 0; i--) {
+          lightningBolts[i].life--;
+          if (lightningBolts[i].life <= 0) lightningBolts.splice(i, 1);
+        }
+
+        // Meteoren bijwerken
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i];
+          m.x += m.vx;
+          m.y += m.vy;
+
+          for (let j = aircrafts.length - 1; j >= 0; j--) {
+            const a = aircrafts[j];
+            if (Math.abs(m.x - a.x) < (a.isMega ? 55 : 32) && Math.abs(m.y - a.y) < 26) {
+              createExplosion(a.x, a.y, ['#ff8833', '#ffff55', '#ffffff'], 28);
+              playSound('explosion');
+              addScore(a.points || 25, a.x, a.y - 10, '#ff8833');
+              aircrafts.splice(j, 1);
+            }
+          }
+
+          for (let j = paratroopers.length - 1; j >= 0; j--) {
+            const p = paratroopers[j];
+            if (Math.abs(m.x - p.x) < 22 && Math.abs(m.y - p.y) < 22) {
+              createExplosion(p.x, p.y, ['#ff8833', '#ffff55'], 18);
+              playSound('explosion');
+              addScore(p.points || 25, p.x, p.y - 10, '#ff8833');
+              paratroopers.splice(j, 1);
+            }
+          }
+
+          if (m.y >= GROUND_Y) {
+            createExplosion(m.x, GROUND_Y - 4, ['#ff8833', '#ff5555', '#ffff55'], 20);
+            playSound('explosion');
+            meteors.splice(i, 1);
           }
         }
 
@@ -1448,10 +1737,57 @@
         for (let i = bullets.length - 1; i >= 0; i--) {
           const b = bullets[i];
           const bRad = b.radius || 3;
+
+          if (adminCheats.homingBullets) {
+            let closest = null;
+            let bestDist = Infinity;
+            for (let k = 0; k < aircrafts.length; k++) {
+              const d = Math.hypot(aircrafts[k].x - b.x, aircrafts[k].y - b.y);
+              if (d < bestDist) {
+                bestDist = d;
+                closest = aircrafts[k];
+              }
+            }
+            for (let k = 0; k < paratroopers.length; k++) {
+              const d = Math.hypot(paratroopers[k].x - b.x, paratroopers[k].y - b.y);
+              if (d < bestDist) {
+                bestDist = d;
+                closest = paratroopers[k];
+              }
+            }
+            if (closest) {
+              const spd = Math.hypot(b.vx, b.vy);
+              const desired = Math.atan2(closest.y - b.y, closest.x - b.x);
+              const current = Math.atan2(b.vy, b.vx);
+              let diff = desired - current;
+              while (diff > Math.PI) diff -= Math.PI * 2;
+              while (diff < -Math.PI) diff += Math.PI * 2;
+              const nextAng = current + Math.max(-0.22, Math.min(0.22, diff));
+              b.vx = Math.cos(nextAng) * spd;
+              b.vy = Math.sin(nextAng) * spd;
+            }
+          }
+
           b.x += b.vx;
           b.y += b.vy;
 
-          if (b.x < -20 || b.x > W + 20 || b.y < -20 || b.y > GROUND_Y) {
+          if (adminCheats.ricochetBullets) {
+            if (b.bounces === undefined) b.bounces = 0;
+            if (b.x <= bRad || b.x >= W - bRad) {
+              b.vx = -b.vx;
+              b.x = Math.max(bRad + 1, Math.min(W - bRad - 1, b.x));
+              b.bounces++;
+            }
+            if (b.y <= bRad) {
+              b.vy = -b.vy;
+              b.y = bRad + 1;
+              b.bounces++;
+            }
+            if (b.bounces > 5 || b.y > GROUND_Y) {
+              bullets.splice(i, 1);
+              continue;
+            }
+          } else if (b.x < -20 || b.x > W + 20 || b.y < -20 || b.y > GROUND_Y) {
             bullets.splice(i, 1);
             continue;
           }
@@ -1482,7 +1818,7 @@
 
           for (let j = paratroopers.length - 1; j >= 0; j--) {
             const p = paratroopers[j];
-            const sizeMult = adminCheats.giantTroops ? 2 : 1;
+            const sizeMult = adminCheats.giantTroops ? 2 : (adminCheats.miniTroops ? 0.5 : 1);
 
             if (p.hasChute && Math.abs(b.x - p.x) < (17 * sizeMult + bRad) && b.y >= (p.y - 28 * sizeMult - bRad) && b.y <= (p.y - 7 * sizeMult + bRad)) {
               p.hasChute = false;
@@ -1509,10 +1845,9 @@
                   vy: -0.7
                 });
               } else {
-                const hitColor = p.type === 'vip' ? '#ffff55' : (p.type === 'heavy' ? '#55ffff' : (p.type === 'speed' ? '#ff8833' : '#ff55ff'));
-                createExplosion(p.x, p.y, [hitColor, '#ffff55', '#ffffff'], p.type === 'vip' ? 28 : 18);
+                createExplosion(p.x, p.y, ['#ff55ff', '#ffff55', '#ff5555'], 18);
                 playSound('explosion');
-                addScore(p.points || 25, p.x, p.y - 10 * sizeMult, hitColor);
+                addScore(p.points || 25, p.x, p.y - 10 * sizeMult, p.type === 'vip' ? '#ffff55' : '#ff55ff');
                 paratroopers.splice(j, 1);
               }
               bulletHit = true;
@@ -1520,54 +1855,123 @@
             }
           }
 
-          if (bulletHit && !adminCheats.bigBullets) {
-            bullets.splice(i, 1);
+          if (bulletHit) {
+            if (!adminCheats.bigBullets) bullets.splice(i, 1);
           }
         }
 
+        // Vliegtuigen bijwerken
         for (let i = aircrafts.length - 1; i >= 0; i--) {
           const a = aircrafts[i];
+          a.x += a.dir * a.speed * timeScale;
+          a.rotorTick++;
+
           if (adminCheats.blackHole) {
             const bhX = W / 2;
             const bhY = 175;
             const dx = bhX - a.x;
             const dy = bhY - a.y;
             const dist = Math.hypot(dx, dy);
-            if (dist < 26) {
-              createExplosion(bhX, bhY, ['#aa66ff', '#ff55ff', '#ffffff'], 25);
+            if (dist < 28) {
+              createExplosion(bhX, bhY, ['#aa66ff', '#ff55ff', '#ffffff'], 24);
               playSound('explosion');
               addScore(a.points || 25, bhX, bhY - 15, '#aa66ff');
               aircrafts.splice(i, 1);
               continue;
             }
-            a.x += (dx / dist) * 4.5 + (-dy / dist) * 2.5;
-            a.y += (dy / dist) * 4.5 + (dx / dist) * 2.5;
-            a.rotorTick++;
-            continue;
+            a.x += (dx / dist) * 4.5;
+            a.y += (dy / dist) * 4.5;
           }
 
-          a.x += a.dir * a.speed * timeScale;
-          a.rotorTick++;
-
-          if (gameState === 'PLAYING' && timeScale > 0 && a.dropsLeft > 0) {
+          if (gameState === 'PLAYING' && a.dropsLeft > 0 && timeScale > 0) {
             const passedDrop = (a.dir === 1 && a.x >= a.nextDropX) || (a.dir === -1 && a.x <= a.nextDropX);
             if (passedDrop) {
               spawnParatrooper(a.x, a.y, a.isMega);
               a.dropsLeft--;
               if (a.dropsLeft > 0) {
-                a.nextDropX = a.x + a.dir * (a.isMega ? 150 : (90 + Math.random() * 140));
+                a.nextDropX = a.x + a.dir * (90 + Math.random() * 140);
               }
             }
           }
 
-          const outBound = a.isMega ? 115 : 75;
-          if ((a.dir === 1 && a.x > W + outBound) || (a.dir === -1 && a.x < -outBound)) {
+          if ((a.dir === 1 && a.x > W + 110) || (a.dir === -1 && a.x < -110)) {
             aircrafts.splice(i, 1);
+          }
+        }
+
+        // Orbital Satelliet-Laser beweegt heen en weer en verdampt vijanden eronder
+        if (adminCheats.orbitalLaser) {
+          orbitalX += orbitalDir * 5.2;
+          if (orbitalX > W - 40) { orbitalX = W - 40; orbitalDir = -1; }
+          if (orbitalX < 40) { orbitalX = 40; orbitalDir = 1; }
+
+          for (let j = aircrafts.length - 1; j >= 0; j--) {
+            if (Math.abs(aircrafts[j].x - orbitalX) < (aircrafts[j].isMega ? 52 : 28)) {
+              createExplosion(aircrafts[j].x, aircrafts[j].y, ['#ff5555', '#ffff55', '#ffffff'], 25);
+              playSound('explosion');
+              addScore(aircrafts[j].points || 25, aircrafts[j].x, aircrafts[j].y - 10, '#ff5555');
+              aircrafts.splice(j, 1);
+            }
+          }
+          for (let j = paratroopers.length - 1; j >= 0; j--) {
+            if (Math.abs(paratroopers[j].x - orbitalX) < 20) {
+              createExplosion(paratroopers[j].x, paratroopers[j].y, ['#ff5555', '#ffff55'], 16);
+              playSound('explosion');
+              addScore(paratroopers[j].points || 25, paratroopers[j].x, paratroopers[j].y - 10, '#ff5555');
+              paratroopers.splice(j, 1);
+            }
+          }
+        }
+
+        // UFO Ontvoeringstraal zweeft rond en zuigt parachutisten naar binnen
+        if (adminCheats.ufoAbduction) {
+          ufoX = W / 2 + Math.sin(frameCount * 0.025) * (W / 2 - 90);
+          for (let j = paratroopers.length - 1; j >= 0; j--) {
+            const p = paratroopers[j];
+            if (Math.abs(p.x - ufoX) < 55 && p.y > 68) {
+              p.x += (ufoX - p.x) * 0.12;
+              p.y -= 4.2;
+              if (p.y <= 78) {
+                createExplosion(ufoX, 74, ['#55ff55', '#ffff55', '#ffffff'], 16);
+                playSound('chute');
+                addScore((p.points || 25) + 15, ufoX, 95, '#55ff55');
+                paratroopers.splice(j, 1);
+              }
+            }
           }
         }
 
         for (let i = paratroopers.length - 1; i >= 0; i--) {
           const p = paratroopers[i];
+
+          // Bunker Super-Magneet trekt parachutisten recht naar het kanon om ze te vernietigen
+          if (adminCheats.bunkerMagnet) {
+            const dx = TURRET_X - p.x;
+            const dy = TURRET_Y - p.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 34) {
+              createExplosion(TURRET_X, TURRET_Y, ['#55ffff', '#ffffff', '#ff55ff'], 18);
+              playSound('explosion');
+              addScore(p.points || 25, TURRET_X, TURRET_Y - 22, '#55ffff');
+              paratroopers.splice(i, 1);
+              continue;
+            }
+            p.x += (dx / dist) * 5.2;
+            p.y += (dy / dist) * 5.2;
+            continue;
+          }
+
+          // Energie-Schild Koepel verdampt alles binnen straal rond bunker
+          if (adminCheats.shieldDome) {
+            const shieldDist = Math.hypot(p.x - TURRET_X, p.y - GROUND_Y);
+            if (shieldDist < 135) {
+              createExplosion(p.x, p.y, ['#55ffff', '#ffffff', '#ff55ff'], 18);
+              playSound('explosion');
+              addScore(p.points || 25, p.x, p.y - 10, '#55ffff');
+              paratroopers.splice(i, 1);
+              continue;
+            }
+          }
 
           if (adminCheats.blackHole) {
             const bhX = W / 2;
@@ -1703,7 +2107,7 @@
       // ==========================================
       function drawTrooper(x, y, hasChute, isFalling, theme, trooperType, hp) {
         const type = trooperType || 'normal';
-        const scale = adminCheats.giantTroops ? 2 : 1;
+        const scale = adminCheats.giantTroops ? 2 : (adminCheats.miniTroops ? 0.5 : 1);
         ctx.save();
         ctx.translate(Math.round(x), Math.round(y));
         if (scale !== 1) {
@@ -1967,6 +2371,16 @@
       function draw() {
         const theme = getCurrentTheme();
 
+        ctx.save();
+        if (adminCheats.upsideDown) {
+          ctx.translate(W / 2, H / 2);
+          ctx.rotate(Math.PI);
+          ctx.translate(-W / 2, -H / 2);
+        }
+        if (screenShakeTimer > 0) {
+          ctx.translate((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 14);
+        }
+
         if (adminCheats.discoMode) {
           const discoHue = (frameCount * 17) % 360;
           ctx.fillStyle = 'hsl(' + discoHue + ', 65%, 14%)';
@@ -2019,52 +2433,114 @@
         // Bunker & Kanon tekenen
         drawTurret(theme);
 
-        // Vliegtuigen & Helikopters tekenen
+        // Vliegtuigen tekenen
         for (let i = 0; i < aircrafts.length; i++) {
           drawAircraft(aircrafts[i], theme);
         }
 
-        // Vallende Parachutisten tekenen
+        // Vallende parachutisten tekenen
         for (let i = 0; i < paratroopers.length; i++) {
           const p = paratroopers[i];
           drawTrooper(p.x, p.y, p.hasChute, !p.hasChute, theme, p.type, p.hp);
         }
 
-        // Gelande Parachutisten of Aanvalspiramide tekenen
+        // Gelande parachutisten of aanvalspiramide tekenen
         if (gameState !== 'ASSAULT') {
           for (let i = 0; i < landedLeft.length; i++) {
-            const t = landedLeft[i];
-            drawTrooper(t.x, t.y - 8, false, false, theme, t.type);
+            drawTrooper(landedLeft[i].x, landedLeft[i].y - 8, false, false, theme, landedLeft[i].type, 1);
           }
           for (let i = 0; i < landedRight.length; i++) {
-            const t = landedRight[i];
-            drawTrooper(t.x, t.y - 8, false, false, theme, t.type);
+            drawTrooper(landedRight[i].x, landedRight[i].y - 8, false, false, theme, landedRight[i].type, 1);
           }
         } else if (assaultSquad) {
           for (let i = 0; i < assaultSquad.troopers.length; i++) {
             const t = assaultSquad.troopers[i];
-            drawTrooper(t.x, t.y - 8, false, false, theme, t.type);
+            drawTrooper(t.x, t.y - 8, false, false, theme, t.type, 1);
           }
         }
 
         // Mega Laserstraal tekenen indien actief
-        if (laserVisualTimer > 0) {
+        if (laserVisualTimer > 0 && turret.alive) {
           ctx.save();
-          const endX = TURRET_X + Math.cos(turret.angle) * 1000;
-          const endY = TURRET_Y + Math.sin(turret.angle) * 1000;
-          ctx.strokeStyle = 'rgba(85, 255, 255, 0.45)';
-          ctx.lineWidth = 18;
+          ctx.strokeStyle = '#55ffff';
+          ctx.lineWidth = 10;
           ctx.beginPath();
           ctx.moveTo(TURRET_X, TURRET_Y);
-          ctx.lineTo(endX, endY);
+          ctx.lineTo(TURRET_X + Math.cos(turret.angle) * 1000, TURRET_Y + Math.sin(turret.angle) * 1000);
           ctx.stroke();
 
           ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 5;
-          ctx.beginPath();
-          ctx.moveTo(TURRET_X, TURRET_Y);
-          ctx.lineTo(endX, endY);
+          ctx.lineWidth = 4;
           ctx.stroke();
+          ctx.restore();
+        }
+
+        // Energie-Schild Koepel tekenen indien actief
+        if (adminCheats.shieldDome) {
+          ctx.save();
+          const pulseAlpha = 0.25 + 0.12 * Math.sin(frameCount * 0.12);
+          ctx.fillStyle = 'rgba(85, 255, 255, ' + pulseAlpha + ')';
+          ctx.strokeStyle = '#55ffff';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(TURRET_X, GROUND_Y, 135, Math.PI, 0, false);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Orbital Satelliet-Laser tekenen indien actief
+        if (adminCheats.orbitalLaser) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(255, 85, 85, 0.28)';
+          ctx.fillRect(orbitalX - 18, 0, 36, GROUND_Y);
+          ctx.fillStyle = '#ff5555';
+          ctx.fillRect(orbitalX - 6, 0, 12, GROUND_Y);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(orbitalX - 2, 0, 4, GROUND_Y);
+          ctx.restore();
+        }
+
+        // UFO Ontvoeringstraal tekenen indien actief
+        if (adminCheats.ufoAbduction) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(85, 255, 85, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(ufoX - 22, 68);
+          ctx.lineTo(ufoX + 22, 68);
+          ctx.lineTo(ufoX + 55, GROUND_Y);
+          ctx.lineTo(ufoX - 55, GROUND_Y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Schotel
+          ctx.fillStyle = '#55ff55';
+          ctx.beginPath();
+          ctx.ellipse(ufoX, 62, 38, 11, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#55ffff';
+          ctx.beginPath();
+          ctx.arc(ufoX, 56, 16, Math.PI, 0, false);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Meteoren tekenen indien actief
+        for (let i = 0; i < meteors.length; i++) {
+          const m = meteors[i];
+          ctx.save();
+          ctx.strokeStyle = '#ff8833';
+          ctx.lineWidth = m.size;
+          ctx.beginPath();
+          ctx.moveTo(m.x, m.y);
+          ctx.lineTo(m.x - m.vx * 5, m.y - m.vy * 5);
+          ctx.stroke();
+
+          ctx.fillStyle = '#ffff55';
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.size * 0.7, 0, Math.PI * 2);
+          ctx.fill();
           ctx.restore();
         }
 
@@ -2138,6 +2614,8 @@
           ctx.fillText('KLIK OP HERVAT OF DRUK OP [P]', W / 2, H / 2 + 28);
           ctx.restore();
         }
+
+        ctx.restore();
       }
 
       // ==========================================
