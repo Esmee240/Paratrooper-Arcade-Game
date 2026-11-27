@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
@@ -433,7 +433,7 @@
         <button id="adm-negscore" class="admin-btn danger" type="button">-1000 SCORE (TROLL)</button>
         <button id="adm-bulletnova" class="admin-btn" type="button">360° KOGELSTORM (NOVA)</button>
         <button id="adm-meteors" class="admin-btn" type="button">METEORENREGEN UIT DE RUIMTE</button>
-        <button id="adm-earthquake" class="admin-btn" type="button">AARDBEVING (VEEG GROND SCHOON)</button>
+        <button id="adm-pinball" class="admin-btn" type="button">PINBALL STUITER-CHAOS</button>
         <button id="adm-lightning" class="admin-btn" type="button">BLIKSEMINSLAG OP VIJANDEN</button>
         <button id="adm-popchutes" class="admin-btn" type="button">POP ALLE PARACHUTES</button>
         <button id="adm-clonetroops" class="admin-btn" type="button">KLOON ALLE PARACHUTISTEN (2X)</button>
@@ -505,7 +505,7 @@
       const admNegScoreBtn = document.getElementById('adm-negscore');
       const admBulletNovaBtn = document.getElementById('adm-bulletnova');
       const admMeteorsBtn = document.getElementById('adm-meteors');
-      const admEarthquakeBtn = document.getElementById('adm-earthquake');
+      const admPinballBtn = document.getElementById('adm-pinball');
       const admLightningBtn = document.getElementById('adm-lightning');
       const admPopChutesBtn = document.getElementById('adm-popchutes');
       const admCloneTroopsBtn = document.getElementById('adm-clonetroops');
@@ -707,12 +707,12 @@
       };
       let secretBuffer = '';
       let laserVisualTimer = 0;
-      let screenShakeTimer = 0;
       let orbitalX = 400;
       let orbitalDir = 1;
       let ufoX = 400;
       let lightningBolts = [];
       let meteors = [];
+      let pinballBumperTimer = 0;
 
       const stars = [];
       for (let i = 0; i < 65; i++) {
@@ -1157,26 +1157,17 @@
         announceAdmin('METEORENREGEN!', '#ff8833');
       });
 
-      admEarthquakeBtn.addEventListener('click', function () {
-        screenShakeTimer = 45;
-        let cleared = landedLeft.length + landedRight.length;
-        landedLeft.forEach(function (t) {
-          createExplosion(t.x, t.y - 8, ['#ff8833', '#ffff55', '#ffffff'], 16);
-        });
-        landedRight.forEach(function (t) {
-          createExplosion(t.x, t.y - 8, ['#ff8833', '#ffff55', '#ffffff'], 16);
-        });
-        landedLeft = [];
-        landedRight = [];
+      admPinballBtn.addEventListener('click', function () {
+        pinballBumperTimer = 360;
         for (let i = 0; i < paratroopers.length; i++) {
-          paratroopers[i].x += (Math.random() - 0.5) * 80;
-          paratroopers[i].x = Math.max(24, Math.min(W - 24, paratroopers[i].x));
+          const p = paratroopers[i];
+          const ang = Math.random() * Math.PI * 2;
+          p.pinballVx = Math.cos(ang) * 8.5;
+          p.pinballVy = Math.sin(ang) * 8.5;
+          p.pinballHits = 0;
         }
-        playSound('explosion');
-        if (cleared > 0) {
-          addScore(cleared * 30, TURRET_X, GROUND_Y - 30, '#ff8833');
-        }
-        announceAdmin('AARDBEVING!', '#ff8833');
+        playSound('chute');
+        announceAdmin('PINBALL STUITER-CHAOS!', '#ff55ff');
       });
 
       admMeltdownBtn.addEventListener('click', function () {
@@ -1186,7 +1177,7 @@
         admMegaFleetBtn.click();
         admVipRainBtn.click();
         admFireworksBtn.click();
-        screenShakeTimer = 60;
+        admPinballBtn.click();
         announceAdmin('TOTAL ADMIN MELTDOWN!!', '#ff5555');
       });
 
@@ -1196,7 +1187,7 @@
           function () { admMeteorsBtn.click(); },
           function () { admLightningBtn.click(); },
           function () { admVipRainBtn.click(); },
-          function () { admEarthquakeBtn.click(); },
+          function () { admPinballBtn.click(); },
           function () { admMegaFleetBtn.click(); },
           function () { admPopChutesBtn.click(); },
           function () { admFireworksBtn.click(); },
@@ -1649,7 +1640,7 @@
         if (isPaused) return;
         frameCount++;
         if (laserVisualTimer > 0) laserVisualTimer--;
-        if (screenShakeTimer > 0) screenShakeTimer--;
+        if (pinballBumperTimer > 0) pinballBumperTimer--;
         const timeScale = adminCheats.freezeEnemies ? 0 : (adminCheats.slowMo ? 0.35 : (adminCheats.fastMo ? 2.5 : 1));
 
         if (gameState === 'PLAYING' && turret.alive) {
@@ -1943,6 +1934,42 @@
 
         for (let i = paratroopers.length - 1; i >= 0; i--) {
           const p = paratroopers[i];
+
+          // Pinball Stuiter-Chaos: parachutisten stuiteren als flipperballen en scoren bij elke botsing
+          if (pinballBumperTimer > 0) {
+            if (p.pinballVx === undefined) {
+              const ang = Math.random() * Math.PI * 2;
+              p.pinballVx = Math.cos(ang) * 8.5;
+              p.pinballVy = Math.sin(ang) * 8.5;
+              p.pinballHits = 0;
+            }
+            p.x += p.pinballVx;
+            p.y += p.pinballVy;
+            let bounced = false;
+            if (p.x <= 22 || p.x >= W - 22) {
+              p.pinballVx = -p.pinballVx;
+              p.x = Math.max(23, Math.min(W - 23, p.x));
+              bounced = true;
+            }
+            if (p.y <= 35 || p.y >= GROUND_Y - 14) {
+              p.pinballVy = -p.pinballVy;
+              p.y = Math.max(36, Math.min(GROUND_Y - 15, p.y));
+              bounced = true;
+            }
+            if (bounced) {
+              p.pinballHits = (p.pinballHits || 0) + 1;
+              createExplosion(p.x, p.y, ['#ff55ff', '#ffff55', '#55ffff'], 10);
+              playSound('chute');
+              addScore(20, p.x, p.y - 10, '#ff55ff');
+              if (p.pinballHits >= 5) {
+                createExplosion(p.x, p.y, ['#ffff55', '#ff5555', '#ffffff'], 22);
+                playSound('explosion');
+                addScore(p.points || 25, p.x, p.y - 12, '#ffff55');
+                paratroopers.splice(i, 1);
+              }
+            }
+            continue;
+          }
 
           // Bunker Super-Magneet trekt parachutisten recht naar het kanon om ze te vernietigen
           if (adminCheats.bunkerMagnet) {
@@ -2376,9 +2403,6 @@
           ctx.translate(W / 2, H / 2);
           ctx.rotate(Math.PI);
           ctx.translate(-W / 2, -H / 2);
-        }
-        if (screenShakeTimer > 0) {
-          ctx.translate((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 14);
         }
 
         if (adminCheats.discoMode) {
